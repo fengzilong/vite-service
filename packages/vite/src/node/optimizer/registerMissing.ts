@@ -36,10 +36,17 @@ export function createOptimizedDeps(server: ViteDevServer): OptimizedDeps {
 
   const cachedMetadata = loadCachedDepOptimizationMetadata(config)
 
-  const optimizedDeps: OptimizedDeps = {
+  const deferred: any = {}
+  deferred.promise = new Promise((resolve, reject) => {
+    deferred.resolve = resolve
+    deferred.reject = reject
+  })
+
+  const optimizedDeps: OptimizedDeps & { optimizing: Promise<void> } = {
     metadata:
       cachedMetadata || createOptimizedDepsMetadata(config, sessionTimestamp),
-    registerMissingImport
+    registerMissingImport,
+    optimizing: deferred.promise
   }
 
   let handle: NodeJS.Timeout | undefined
@@ -115,17 +122,21 @@ export function createOptimizedDeps(server: ViteDevServer): OptimizedDeps {
         scanPhaseProcessing.resolve()
         optimizedDeps.scanProcessing = undefined
 
-        runOptimizer()
+        await runOptimizer()
+        deferred.resolve()
       } catch (e) {
         logger.error(e.message)
         if (optimizedDeps.scanProcessing) {
           scanPhaseProcessing.resolve()
           optimizedDeps.scanProcessing = undefined
         }
+        deferred.reject()
       }
     }
 
     setTimeout(warmUp, 0)
+  } else {
+    deferred.resolve()
   }
 
   async function runOptimizer(isRerun = false) {
@@ -181,13 +192,15 @@ export function createOptimizedDeps(server: ViteDevServer): OptimizedDeps {
       // is required. If the files are stable, we can avoid the reload that is expensive
       // for large applications. Comparing their fileHash we can find out if it is safe to
       // keep the current browser state.
-      const needsReload =
-        metadata.hash !== newData.hash ||
-        Object.keys(metadata.optimized).some((dep) => {
-          return (
-            metadata.optimized[dep].fileHash !== newData.optimized[dep].fileHash
-          )
-        })
+
+      // const needsReload =
+      //   metadata.hash !== newData.hash ||
+      //   Object.keys(metadata.optimized).some((dep) => {
+      //     return (
+      //       metadata.optimized[dep].fileHash !== newData.optimized[dep].fileHash
+      //     )
+      //   })
+      const needsReload = true
 
       const commitProcessing = () => {
         processingResult.commit()

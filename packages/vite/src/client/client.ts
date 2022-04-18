@@ -13,13 +13,13 @@ declare const __HMR_PORT__: string
 declare const __HMR_TIMEOUT__: number
 declare const __HMR_ENABLE_OVERLAY__: boolean
 
-console.log('[vite] connecting...')
+// console.log('[vite] connecting...')
 
 // use server configuration, then fallback to inference
 const socketProtocol =
   __HMR_PROTOCOL__ || (location.protocol === 'https:' ? 'wss' : 'ws')
 const socketHost = `${__HMR_HOSTNAME__ || location.hostname}:${__HMR_PORT__}`
-const socket = new WebSocket(`${socketProtocol}://${socketHost}`, 'vite-hmr')
+const socket = null // new WebSocket(`${socketProtocol}://${socketHost}`, 'vite-hmr')
 const base = __BASE__ || '/'
 const messageBuffer: string[] = []
 
@@ -41,9 +41,9 @@ function cleanUrl(pathname: string): string {
 }
 
 // Listen for messages
-socket.addEventListener('message', async ({ data }) => {
-  handleMessage(JSON.parse(data))
-})
+// socket.addEventListener('message', async ({ data }) => {
+//   handleMessage(JSON.parse(data))
+// })
 
 let isFirstUpdate = true
 
@@ -214,12 +214,12 @@ async function waitForSuccessfulPing(ms = 1000) {
 }
 
 // ping server
-socket.addEventListener('close', async ({ wasClean }) => {
-  if (wasClean) return
-  console.log(`[vite] server connection lost. polling for restart...`)
-  await waitForSuccessfulPing()
-  location.reload()
-})
+// socket.addEventListener('close', async ({ wasClean }) => {
+//   if (wasClean) return
+//   console.log(`[vite] server connection lost. polling for restart...`)
+//   await waitForSuccessfulPing()
+//   location.reload()
+// })
 
 // https://wicg.github.io/construct-stylesheets
 const supportsConstructedSheet = (() => {
