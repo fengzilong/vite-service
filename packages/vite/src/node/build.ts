@@ -1,3 +1,4 @@
+/* eslint-disable node/no-missing-require */
 import fs from 'fs'
 import path from 'path'
 import colors from 'picocolors'
@@ -369,7 +370,7 @@ async function doBuild(
 
   config.logger.info(
     colors.cyan(
-      `vite v${require('vite/package.json').version} ${colors.green(
+      `vite v${require('vite-service/package.json').version} ${colors.green(
         `building ${ssr ? `SSR bundle ` : ``}for ${config.mode}...`
       )}`
     )

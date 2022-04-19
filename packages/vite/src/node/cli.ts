@@ -1,3 +1,4 @@
+/* eslint-disable node/no-missing-require */
 import { cac } from 'cac'
 import colors from 'picocolors'
 import { performance } from 'perf_hooks'
@@ -97,8 +98,9 @@ cli
       const info = server.config.logger.info
 
       info(
-        colors.cyan(`\n  vite v${require('vite/package.json').version}`) +
-          colors.green(` dev server running at:\n`),
+        colors.cyan(
+          `\n  vite v${require('vite-service/package.json').version}`
+        ) + colors.green(` dev server running at:\n`),
         {
           clear: !server.config.logger.hasWarned
         }

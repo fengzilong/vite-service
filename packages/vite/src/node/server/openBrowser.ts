@@ -1,3 +1,4 @@
+/* eslint-disable node/no-missing-require */
 /**
  * The following is modified based on source found in
  * https://github.com/facebook/create-react-app
@@ -72,7 +73,9 @@ function startBrowserProcess(browser: string | undefined, url: string) {
       // on OS X Google Chrome with AppleScript
       execSync('ps cax | grep "Google Chrome"')
       execSync('osascript openChrome.applescript "' + encodeURI(url) + '"', {
-        cwd: path.dirname(require.resolve('vite/bin/openChrome.applescript')),
+        cwd: path.dirname(
+          require.resolve('vite-service/bin/openChrome.applescript')
+        ),
         stdio: 'ignore'
       })
       return true
